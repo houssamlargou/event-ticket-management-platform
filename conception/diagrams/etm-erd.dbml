@@ -1,0 +1,94 @@
+Project EventTicketManagementPlatform {
+  database_type: "PostgreSQL"
+  Note: "ERD for Event - Ticket Management Platform"
+}
+
+Table roles {
+  id bigint [pk, increment]
+  name varchar [not null, unique]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table users {
+  id bigint [pk, increment]
+  role_id bigint [not null, ref: > roles.id]
+  name varchar [not null]
+  email varchar [not null, unique]
+  password varchar [not null]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table categories {
+  id bigint [pk, increment]
+  name varchar [not null]
+  description text
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table venues {
+  id bigint [pk, increment]
+  name varchar [not null]
+  address varchar
+  city varchar [not null]
+  capacity int
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table events {
+  id bigint [pk, increment]
+  organizer_id bigint [not null, ref: > users.id]
+  category_id bigint [not null, ref: > categories.id]
+  venue_id bigint [not null, ref: > venues.id]
+  title varchar [not null]
+  description text
+  event_date timestamp [not null]
+  status varchar [not null, note: "pending, approved, rejected"]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table tickets {
+  id bigint [pk, increment]
+  event_id bigint [not null, ref: > events.id]
+  name varchar [not null, note: "Standard, VIP, Early Bird..."]
+  price decimal(10,2) [not null]
+  quantity int [not null]
+  remaining_quantity int [not null]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table orders {
+  id bigint [pk, increment]
+  user_id bigint [not null, ref: > users.id]
+  total_price decimal(10,2) [not null]
+  status varchar [not null, note: "pending, paid, cancelled"]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table order_items {
+  id bigint [pk, increment]
+  order_id bigint [not null, ref: > orders.id]
+  ticket_id bigint [not null, ref: > tickets.id]
+  quantity int [not null]
+  unit_price decimal(10,2) [not null]
+  subtotal decimal(10,2) [not null]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table payments {
+  id bigint [pk, increment]
+  order_id bigint [not null, unique, ref: > orders.id]
+  amount decimal(10,2) [not null]
+  payment_method varchar [note: "card, cash, simulated"]
+  status varchar [not null, note: "pending, paid, failed"]
+  paid_at timestamp
+  created_at timestamp
+  updated_at timestamp
+}
