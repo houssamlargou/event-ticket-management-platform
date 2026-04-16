@@ -22,4 +22,25 @@ class AuthService
             'token' => $token,
         ];
     }
+
+    public function login(array $data): array
+    {
+        $user = User::where('email', $data['email'])->first();
+
+        if(!$user || ! Hash::check($data['password'], $user->password)) {
+            return [
+                'success' => false,
+                'message' => 'Invalid credentials.',
+            ];
+        }
+
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        return [
+            'success' => true,
+            'message' => 'Login successful.',
+            'user' => $user,
+            'token' => $token,
+        ];
+    }
 }

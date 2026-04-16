@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Requests\Auth\LoginRequest;
 use App\Services\AuthService;
 use Illuminate\Http\JsonResponse;
 
@@ -21,5 +22,24 @@ class authController extends Controller
             'message' => 'User registered successfully.',
             'data' => $result,
         ], 201);
+    }
+
+    public function login(LoginRequest $request)
+    {
+        $result = $this->authService->login($request->validated());
+
+        if(! $result['success']) {
+            return response()->json([
+                'message' => $result['message'],
+            ],401);
+        }
+
+        return response()->json([
+            'message' => $result['message'],
+            'data' => [
+                'user' => $result['user'],
+                'token' => $result['token'],
+            ],
+        ]);
     }
 }
