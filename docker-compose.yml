@@ -18,6 +18,7 @@ services:
       POSTGRES_DB: etm_db
       POSTGRES_USER: etm_user
       POSTGRES_PASSWORD: 0000
+      ports: "5435:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
 
