@@ -15,4 +15,8 @@ class AuthRepository implements AuthRepositoryInterface {
     public function deleteCurrentToken($user): void {
         $user->currentAccessToken()->delete();
     }
+
+    public function getAuthenticatedUser($user) {
+        return $user;
+    }
 }
