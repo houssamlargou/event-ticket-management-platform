@@ -51,4 +51,10 @@ class AuthService
             'message' => 'Logout successfully.',
         ];
     }
+
+    public function getAuthenticatedUser($user): array {
+        return [
+            'user' => $this->authRepository->getAuthenticatedUser($user),
+        ];
+    }
 }

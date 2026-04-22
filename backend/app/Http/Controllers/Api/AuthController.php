@@ -47,4 +47,12 @@ class authController extends Controller
         $result = $this->authService->logout(auth()->user());
         return response()->json($result);
     }
+
+    public function user(): JsonResponse {
+        $result = $this->authService->getAuthenticatedUser(auth()->user());
+        return response()->json([
+            'message' => 'Authenticated user retrieved successfully.',
+            'data' => $result,
+        ]);
+    }
 }
