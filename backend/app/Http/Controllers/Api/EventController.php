@@ -31,7 +31,7 @@ class EventController extends Controller
         ], 201);
     }
     public function index(): JsonResponse {
-        $events = $this->eventService->getAllEvents();
+        $events = $this->eventService->getVisibleEvents(request()->user('sanctum'));
 
         return response()->json([
             'message' => 'Events retrieved successfully.',
@@ -94,6 +94,7 @@ class EventController extends Controller
     public function moderate(int $id): JsonResponse {
         $status = request()->input('status');
         $result = $this->eventService->moderateEvent($id, $status);
+        dd(auth()->user());
         if(!$result['success']){
             return response()->json([
                 'message' => $result['message'],

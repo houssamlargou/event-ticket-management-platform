@@ -14,7 +14,7 @@ class EventService {
                 'description' => $data['description'],
                 'event_date' => $data['event_date'],
                 'location' => $data['location'],
-                'status' => $date['status'],
+                'status' => 'pending',
             ]);
         }
         public function getAllEvents(){
@@ -92,8 +92,12 @@ class EventService {
             return [
                 'success' => true,
                 'status' => 200,
-                'message' => 'Event {$status} successfully.',
+                'message' => "Event {$status} successfully.",
                 'data' => $updateEvent,
             ];
+        }
+
+        public function getVisibleEvents($user = null) {
+            return $this->eventRepository->getVisibleEvents($user);
         }
 }

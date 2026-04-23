@@ -10,4 +10,5 @@ interface EventRepositoryInterface {
     public function update(Event $event, array $data): Event;
     public function delete(Event $event): void;
     public function updateStatus(Event $event, string $status): Event;
+    public function getVisibleEvents($user);
 }
