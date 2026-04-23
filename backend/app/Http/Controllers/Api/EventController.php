@@ -29,4 +29,12 @@ class EventController extends Controller
             'data' => $event,
         ], 201);
     }
+    public function index(): JsonResponse {
+        $events = $this->eventService->getAllEvents();
+
+        return response()->json([
+            'message' => 'Events retrieved successfully.',
+            'data' => $events,
+        ]);
+    }
 }

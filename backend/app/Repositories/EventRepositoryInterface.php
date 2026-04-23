@@ -5,4 +5,5 @@ use App\Models\Event;
 
 interface EventRepositoryInterface {
     public function create(array $data): Event;
+    public function getAll();
 }

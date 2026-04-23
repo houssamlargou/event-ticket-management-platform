@@ -16,4 +16,7 @@ class EventService {
                 'location' => $data['location']
             ]);
         }
+        public function getAllEvents(){
+            return $this->eventRepository->getAll();
+        }
 }
