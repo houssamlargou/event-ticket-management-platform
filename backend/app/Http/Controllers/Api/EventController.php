@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Event\StoreEventRequest;
+use App\Http\Requests\Event\UpdateEventRequest;
 use App\Services\EventService;
 use Illuminate\Http\JsonResponse;
 
@@ -48,5 +49,27 @@ class EventController extends Controller
             'message' => 'Event retrieved successfully.',
             'data' => $event,
         ]);
+    }
+    public function update(UpdateEventRequest $request, int $id): JsonResponse {
+        $user = auth()->user();
+        if(!$user){
+            return response()->json([
+                'message' => 'Unauthenticated.',
+            ], 401);
+        }
+        $result = $this->eventService->updateEvent(
+            $id,
+            $request->validated(),
+            $user
+        );
+        if(!$result['success']){
+            return response()->json([
+                'message' => $result['message'],
+            ], $result['status']);
+        }
+        return response()->json([
+            'message' => $result['message'],
+            'data' => $result['data'],
+        ], $result['status']);
     }
 }

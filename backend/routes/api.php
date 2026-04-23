@@ -26,3 +26,4 @@ Route::get('/organizer-only', function(){
 Route::post('/events', [EventController::class, 'store'])->middleware(['role:organizer', 'auth:sanctum']);
 Route::get('/events', [EventController::class, 'index']);
 Route::get('/events/{id}', [EventController::class, 'show']);
+Route::put('/events/{id}', [EventController::class, 'update'])->middleware(['auth:sanctum', 'role:organizer']);
