@@ -37,4 +37,16 @@ class EventController extends Controller
             'data' => $events,
         ]);
     }
+    public function show(int $id): JsonResponse {
+        $event = $this->eventService->getEventById($id);
+        if(!$event){
+            return response()->json([
+                'message' => 'Event not found.',
+            ], 404);
+        }
+        return response()->json([
+            'message' => 'Event retrieved successfully.',
+            'data' => $event,
+        ]);
+    }
 }

@@ -12,4 +12,8 @@ class EventRepository implements EventRepositoryInterface {
     public function getAll(){
         return Event::with('user')->latest()->get();
     }
+
+    public function findById(int $id){
+        return Event::with('user')->find($id);
+    }
 };
