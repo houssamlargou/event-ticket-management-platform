@@ -19,4 +19,7 @@ class EventService {
         public function getAllEvents(){
             return $this->eventRepository->getAll();
         }
+        public function getEventById(int $id){
+            return $this->eventRepository->findById($id);
+        }
 }
