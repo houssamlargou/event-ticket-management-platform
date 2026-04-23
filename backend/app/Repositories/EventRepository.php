@@ -32,4 +32,36 @@ class EventRepository implements EventRepositoryInterface {
         ]);
         return $event->fresh(['user']);
     }
+
+    public function getVisibleEvents($user) {
+        
+        if(!$user){
+            return Event::with('user')
+            ->where('status', 'approved')
+            ->latest()
+            ->get();
+        }
+
+            
+        if($user->role === 'admin'){
+            return Event::with('user')
+                    ->latest()
+                    ->get();
+        }
+
+        if($user->role === 'organizer'){
+            return Event::with('user')
+                    ->where(function($query) use ($user){
+                        $query->where('status', 'approved')
+                                ->orWhere('user_id', $user->id);
+                    })
+                    ->latest()
+                    ->get();
+        }
+
+        return Event::with('user')
+                ->where('status', 'approved')
+                ->latest()
+                ->get();
+    }
 };
