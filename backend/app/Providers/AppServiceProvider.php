@@ -7,6 +7,8 @@ use App\Repositories\AuthRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 use App\Repositories\EventRepository;
 use App\Repositories\EventRepositoryInterface;
+use App\Repositories\TicketRepository;
+use App\Repositories\TicketRepositoryInterface;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -17,6 +19,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(AuthRepositoryInterface::class, AuthRepository::class);
         $this->app->bind(EventRepositoryInterface::class, EventRepository::class);
+        $this->app->bind(TicketRepositoryInterface::class, TicketRepository::class);
     }
 
     /**

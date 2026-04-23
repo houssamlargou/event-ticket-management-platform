@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\EventController;
+use App\Http\Controllers\Api\TicketController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -29,5 +30,6 @@ Route::get('/events/{id}', [EventController::class, 'show']);
 Route::middleware(['auth:sanctum', 'role:organizer'])->group(function(){
     Route::put('/events/{id}', [EventController::class, 'update']);
     Route::delete('/events/{id}', [EventController::class, 'destroy']);
+    Route::post('/events/{eventId}/tickets', [TicketController::class, 'store']);
     });
 Route::patch('/events/{id}', [EventController::class, 'moderate'])->middleware(['auth:sanctum', 'role:admin']);
