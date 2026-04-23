@@ -90,4 +90,18 @@ class EventController extends Controller
             'message' => $result['message'],
         ], $result['status']);
     }
+
+    public function moderate(int $id): JsonResponse {
+        $status = request()->input('status');
+        $result = $this->eventService->moderateEvent($id, $status);
+        if(!$result['success']){
+            return response()->json([
+                'message' => $result['message'],
+            ], $result['status']);
+        }
+        return response()->json([
+            'message' => $result['message'],
+            'data' => $result['data'],
+        ], $result['status']);
+    }
 }

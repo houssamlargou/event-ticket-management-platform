@@ -25,4 +25,11 @@ class EventRepository implements EventRepositoryInterface {
     public function delete(Event $event): void {
         $event->delete();
     }
+
+    public function updateStatus(Event $event, string $status): Event {
+        $event->update([
+            'status' => $status,
+        ]);
+        return $event->fresh(['user']);
+    }
 };
