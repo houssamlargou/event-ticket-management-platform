@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\EventController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -21,3 +22,5 @@ Route::get('/organizer-only', function(){
         'message' => 'Welcome organizer.',
     ]);
 })->middleware(['role:organizer', 'auth:sanctum']);
+
+Route::post('/events', [EventController::class, 'store'])->middleware(['role:organizer', 'auth:sanctum']);
