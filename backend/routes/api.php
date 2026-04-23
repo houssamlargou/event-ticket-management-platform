@@ -29,4 +29,5 @@ Route::get('/events/{id}', [EventController::class, 'show']);
 Route::middleware(['auth:sanctum', 'role:organizer'])->group(function(){
     Route::put('/events/{id}', [EventController::class, 'update']);
     Route::delete('/events/{id}', [EventController::class, 'destroy']);
-});
+    });
+    Route::patch('/events/{id}', [EventController::class, 'moderate'])->middleware(['auth:sanctum', 'role:admin']);

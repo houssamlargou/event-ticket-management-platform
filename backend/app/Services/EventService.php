@@ -13,7 +13,8 @@ class EventService {
                 'title' => $data['title'],
                 'description' => $data['description'],
                 'event_date' => $data['event_date'],
-                'location' => $data['location']
+                'location' => $data['location'],
+                'status' => $date['status'],
             ]);
         }
         public function getAllEvents(){
@@ -68,6 +69,31 @@ class EventService {
                 'success' => true,
                 'status' => 200,
                 'message' => 'Event deleted successfully.',
+            ];
+        }
+
+        public function moderateEvent(int $id, string $status){
+            $event = $this->eventRepository->findById($id);
+            if(!$event){
+                return [
+                    'success' => false,
+                    'status' => 404,
+                    'message' => 'Event not found.',
+                ];
+            }
+            if(!in_array($status, ['approved', 'rejected'])) {
+                return [
+                    'success' => false,
+                    'status' => 422,
+                    'message' => 'Invalid status.',
+                ];
+            }
+            $updateEvent = $this->eventRepository->updateStatus($event, $status);
+            return [
+                'success' => true,
+                'status' => 200,
+                'message' => 'Event {$status} successfully.',
+                'data' => $updateEvent,
             ];
         }
 }
