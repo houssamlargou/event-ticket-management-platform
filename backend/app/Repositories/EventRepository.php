@@ -16,4 +16,9 @@ class EventRepository implements EventRepositoryInterface {
     public function findById(int $id){
         return Event::with('user')->find($id);
     }
+
+    public function update(Event $event, array $data): Event {
+        $event->update($data);
+        return $event->fresh(['user']);
+    }
 };
