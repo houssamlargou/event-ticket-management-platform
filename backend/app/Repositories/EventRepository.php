@@ -21,4 +21,8 @@ class EventRepository implements EventRepositoryInterface {
         $event->update($data);
         return $event->fresh(['user']);
     }
+
+    public function delete(Event $event): void {
+        $event->delete();
+    }
 };

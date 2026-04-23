@@ -46,4 +46,28 @@ class EventService {
                 'data' => $updatedEvent,
             ];
         }
+
+        public function deleteEvent(int $id, $user) {
+            $event = $this->eventRepository->findById($id);
+            if(!$event) {
+                return [
+                    'success' => false,
+                    'status' => 404,
+                    'message' => 'Event not found.',
+                ];
+            }
+            if($event->user_id !== $user->id) {
+                return [
+                    'success' => false,
+                    'status' => 403,
+                    'message' => 'Forbidden. You can only delete your own event.',
+                ];
+            }
+            $this->eventRepository->delete($event);
+            return [
+                'success' => true,
+                'status' => 200,
+                'message' => 'Event deleted successfully.',
+            ];
+        }
 }

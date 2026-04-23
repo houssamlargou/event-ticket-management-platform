@@ -72,4 +72,22 @@ class EventController extends Controller
             'data' => $result['data'],
         ], $result['status']);
     }
+
+    public function destroy(int $id): JsonResponse {
+        $user = auth()->user();
+        if(!$user){
+            return response()->json([
+                'message' => 'Unauthenticated.',
+            ], 401);
+        }
+        $result = $this->eventService->deleteEvent($id, $user);
+        if(!$result['success']){
+            return response()->json([
+                'message' => $result['message'],
+            ], $result['status']);
+        }
+        return response()->json([
+            'message' => $result['message'],
+        ], $result['status']);
+    }
 }
