@@ -8,4 +8,5 @@ interface EventRepositoryInterface {
     public function getAll();
     public function findById(int $id);
     public function update(Event $event, array $data): Event;
+    public function delete(Event $event): void;
 }
