@@ -33,3 +33,4 @@ Route::middleware(['auth:sanctum', 'role:organizer'])->group(function(){
     Route::post('/events/{eventId}/tickets', [TicketController::class, 'store']);
     });
 Route::patch('/events/{id}', [EventController::class, 'moderate'])->middleware(['auth:sanctum', 'role:admin']);
+Route::get('/events/{eventId}/tickets', [TicketController::class, 'index']);

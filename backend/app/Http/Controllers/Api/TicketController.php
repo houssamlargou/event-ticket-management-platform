@@ -33,4 +33,18 @@ class TicketController extends Controller
             'data' => $result['data'],
         ], $result['status']);
     }
+
+    public function index(int $eventId): JsonResponse {
+        $result = $this->ticketService->getTicketsByEvent($eventId);
+        if(!$result['success']){
+            return response()->json([
+                'message' => $result['message'],
+            ], $result['status']);
+        }
+
+        return response()->json([
+            'message' => $result['message'],
+            'data' => $result['data'],
+        ], $result['status']);
+    }
 }

@@ -39,4 +39,24 @@ class TicketService {
             'data' => $ticket
         ];
     }
+
+    public function getTicketsByEvent(int $eventId) {
+        $event = $this->eventRepository->findById($eventId);
+        if(!$event){
+            return [
+                'success' => false,
+                'status' => 404,
+                'message' => 'Event not found.',
+            ];
+        }
+
+        $tickets = $this->ticketRepository->getByEventId($eventId);
+
+        return [
+            'success' => true,
+            'status' => 200,
+            'message' => 'Tickets retrieved successfully.',
+            'data' => $tickets,
+        ];
+    }
 }
