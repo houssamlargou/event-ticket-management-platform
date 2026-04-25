@@ -107,4 +107,41 @@ class OrderService {
             'data' => $order,
         ];
     }
+
+    public function payOrder(int $id, $user):array {
+        $order = $this->orderRepository->findById($id);
+
+        if(!$order){
+            return [
+                'success' => false,
+                'status' => 404,
+                'message' => 'Order not found.',
+            ];
+        }
+
+        if($order->user_id !== $user->id) {
+            return [
+                'success' => false,
+                'status' => 403,
+                'message' => 'Forbidden. You can only pay own order.',
+            ];
+        }
+
+        if($order->payment_status === 'paid') {
+            return [
+                'success' => false,
+                'status' => 400,
+                'message' => 'Order is already paid.'
+            ];
+        }
+
+        $updatedOrder = $this->orderRepository->markAsPaid($order);
+
+        return [
+            'success' => true,
+            'status' => 200,
+            'message' => 'Payment successful.',
+            'data' => $updatedOrder,
+        ];
+    }
 }
