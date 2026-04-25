@@ -31,4 +31,12 @@ class OrderRepository implements OrderRepositoryInterface {
         $order ->update($data);
         return $order->fresh(['ticket.event']);
     }
+
+    public function markAsPaid($order){
+        $order->update([
+            'payment_status' => 'paid',
+        ]);
+
+        return $order->fresh(['ticket.event']);
+    }
 }

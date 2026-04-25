@@ -75,5 +75,28 @@ class OrderController extends Controller
         ], $result['status']);
     }
 
+    public function pay(int $id): JsonResponse {
+        $user = request()->user('sanctum');
+
+        if(!$user) {
+            return response()->json([
+                'message' => 'Unauthenticated.',
+            ], 401);
+        }
+
+        $result = $this->orderService->payOrder($id, $user);
+
+        if(!$result['success']){
+            return response()->json([
+                'message' => $result['message'],
+            ], $result['status']);
+        }
+
+        return response()->json([
+            'message' => $result['message'],
+            'data' => $result['data'],
+        ], $result['status']);
+    }
+
     
 }
