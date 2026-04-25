@@ -56,4 +56,31 @@ class OrderService {
             'data' => $orders,
         ];
     }
+
+    public function getOrderById(int $id, $user): array {
+        $order = $this->orderRepository->findById($id);
+
+        if(!$order){
+            return [
+                'success' => false,
+                'status' => 404,
+                'message' => 'Order not found.',
+            ];
+        }
+
+        if($order->user_id !== $user->id){
+            return [
+                'success' => false,
+                'status' => 403,
+                'message' => 'Forbidden. You can only view your own order.',
+            ];
+        }
+
+        return [
+            'success' => true,
+            'status' => 200,
+            'message' => 'Order retrieved successfully.',
+            'data' => $order,
+        ];
+    }
 }
