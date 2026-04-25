@@ -4,11 +4,19 @@ namespace App\Services;
 
 use App\Repositories\OrderRepositoryInterface;
 use App\Repositories\TicketRepositoryInterface;
+use Illuminate\Support\Facades\DB;
 
 class OrderService {
     public function __construct(protected OrderRepositoryInterface $orderRepository, protected TicketRepositoryInterface $ticketRepository){}
     public function createOrder(array $data, $user):array {
-        $ticket = $this->ticketRepository->findById($data['ticket_id']);
+
+    return DB::transaction(function () use ($data, $user) {
+        $ticket = $this->ticketRepository
+                    ->query()
+                    ->where('id', $data['ticket_id'])
+                    ->lockForUpdate()
+                    ->first();
+
         if(!$ticket){
             return [
                 'success' => false,
@@ -16,6 +24,7 @@ class OrderService {
                 'message' => 'Ticket not found.'
             ];
         }
+    
 
         if($data['quantity'] > $ticket->quantity){
             return [
@@ -57,7 +66,8 @@ class OrderService {
             'message' => 'Order created successfully.',
             'data' => $order
         ];
-    }
+    });
+}
 
     public function getUserOrders($user): array {
         $orders = $this->orderRepository->getByUserId($user->id);
