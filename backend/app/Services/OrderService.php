@@ -144,4 +144,47 @@ class OrderService {
             'data' => $updatedOrder,
         ];
     }
+
+    public function cancelOrder(int $id, $user):array {
+        $order = $this->orderRepository->findById($id);
+
+        if(!$order){
+            return [
+                'success' => false,
+                'status' => 404,
+                'message' => 'Order not found.',
+            ];
+        }
+
+        if($order->user_id !== $user->id){
+            return [
+                'success' => false,
+                'status' => 403,
+                'message' => 'Forbidden. You can only cancel your own order.',
+            ];
+        }
+
+        if($order->payment_status !== 'pending') {
+            return [
+                'success' => false,
+                'status' => 400,
+                'message' => 'Only pending orders can be cancelled.',
+            ];
+        }
+
+        $ticket = $order->ticket;
+
+        $ticket->update([
+            'quantity' => $ticket->quantity + $order->quantity,
+        ]);
+
+        $cancelledOrder = $this->orderRepository->cancel($order);
+
+        return [
+            'success' => true,
+            'status' => 200,
+            'message' => 'Order cancelled successfully.',
+            'data' => $cancelledOrder,
+        ];
+    }
 }

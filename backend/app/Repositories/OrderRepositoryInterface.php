@@ -11,4 +11,5 @@ interface OrderRepositoryInterface {
     public function findByUserAndTicket(int $userId, int $ticketId);
     public function update($order, array $data);
     public function markAsPaid($order);
+    public function cancel($order);
 }
