@@ -4,6 +4,8 @@ namespace App\Repositories;
 
 use App\Models\Event;
 
+// $this->
+
 class EventRepository implements EventRepositoryInterface {
     public function create(array $data): Event {
         return Event::create($data);
@@ -33,35 +35,23 @@ class EventRepository implements EventRepositoryInterface {
         return $event->fresh(['user']);
     }
 
-    public function getVisibleEvents($user) {
-        
+    public function getVisibleEvents($user = null, array $filter = []) {
+    
+        $query = Event::with('user');
+
         if(!$user){
-            return Event::with('user')
-            ->where('status', 'approved')
-            ->latest()
-            ->get();
+            $query->where('status', 'approved');
+        } else if ($user->role === 'organizer') {
+            $query->where(function ($q) use ($user){
+                $q->where('status', 'approved')
+                    ->orWhere('user_id'. $user->id);
+            });
         }
 
-            
-        if($user->role === 'admin'){
-            return Event::with('user')
-                    ->latest()
-                    ->get();
+        if(!empty($filter['status'])){
+            $query->where('status', $filter['status']);
         }
 
-        if($user->role === 'organizer'){
-            return Event::with('user')
-                    ->where(function($query) use ($user){
-                        $query->where('status', 'approved')
-                                ->orWhere('user_id', $user->id);
-                    })
-                    ->latest()
-                    ->get();
-        }
-
-        return Event::with('user')
-                ->where('status', 'approved')
-                ->latest()
-                ->get();
+        return $query->latest()->paginate(10);
     }
 };
