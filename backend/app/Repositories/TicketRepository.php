@@ -18,4 +18,8 @@ class TicketRepository implements TicketRepositoryInterface {
     public function findById(int $id) {
         return Ticket::find($id);
     }
+
+    public function query(){
+        return TIcket::query();
+    }
 }
