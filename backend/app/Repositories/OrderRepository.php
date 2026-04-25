@@ -8,4 +8,11 @@ class OrderRepository implements OrderRepositoryInterface {
     public function create(array $data):Order {
         return Order::create($data);
     }
+
+    public function getByUserId($userId){
+        return Order::with(['ticket.event'])
+                ->where('user_id', $userId)
+                ->latest()
+                ->get();
+    }
 }
