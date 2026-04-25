@@ -45,4 +45,15 @@ class OrderService {
             'data' => $order
         ];
     }
+
+    public function getUserOrders($user): array {
+        $orders = $this->orderRepository->getByUserId($user->id);
+
+        return [
+            'success' => true,
+            'status' => 200,
+            'message' => 'Order retrieved successfully.',
+            'data' => $orders,
+        ];
+    }
 }
