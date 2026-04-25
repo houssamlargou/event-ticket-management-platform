@@ -30,14 +30,19 @@ class EventController extends Controller
             'data' => $event,
         ], 201);
     }
+    
     public function index(): JsonResponse {
-        $events = $this->eventService->getVisibleEvents(request()->user('sanctum'));
+        $user = request()->user('sanctum');
 
-        return response()->json([
-            'message' => 'Events retrieved successfully.',
-            'data' => $events,
-        ]);
+        $filter = [
+            'status' => request()->query('status'),
+            ];
+
+        $events = $this->eventService->getVisibleEvents($user, $filter);
+
+        return response()->json($events);
     }
+
     public function show(int $id): JsonResponse {
         $event = $this->eventService->getEventById($id);
         if(!$event){

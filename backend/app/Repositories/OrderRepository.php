@@ -18,7 +18,9 @@ class OrderRepository implements OrderRepositoryInterface {
 
     public function findById(int $id){
         return Order::with('ticket.event')
-                ->find($id);
+                ->where('user_id', $id)
+                ->latest()
+                ->paginate(10);
     }
 
     public function findByUserAndTicket(int $userId, int $ticketId) {
