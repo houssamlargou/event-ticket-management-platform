@@ -28,6 +28,6 @@ Route::middleware(['auth:sanctum', 'role:organizer'])->group(function(){
     Route::delete('/events/{id}', [EventController::class, 'destroy']);
     Route::post('/events/{eventId}/tickets', [TicketController::class, 'store']);
     });
-Route::patch('/events/{id}', [EventController::class, 'moderate'])->middleware(['auth:sanctum', 'role:admin']);
-Route::get('/events/{eventId}/tickets', [TicketController::class, 'index']);
+    Route::get('/events/{eventId}/tickets', [TicketController::class, 'index']);
+Route::patch('/events/{id}/status', [EventController::class, 'moderate'])->middleware(['auth:sanctum', 'role:admin']);
 

@@ -7,6 +7,7 @@ use App\Http\Requests\Event\StoreEventRequest;
 use App\Http\Requests\Event\UpdateEventRequest;
 use App\Services\EventService;
 use Illuminate\Http\JsonResponse;
+use App\Http\Resources\EventResource;
 
 class EventController extends Controller
 {
@@ -40,7 +41,7 @@ class EventController extends Controller
 
         $events = $this->eventService->getVisibleEvents($user, $filter);
 
-        return response()->json($events);
+        return EventResource::collection($events);
     }
 
     public function show(int $id): JsonResponse {

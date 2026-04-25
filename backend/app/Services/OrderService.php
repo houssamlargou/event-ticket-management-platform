@@ -43,6 +43,16 @@ class OrderService {
                 'quantity' => $newQuantity,
                 'total_price' => $newTotalPrice,
             ]);
+            $ticket->update([
+                'quantity' => $ticket->quantity - $data['quantity'],
+            ]);
+
+            return [
+                'success' => true,
+                'status' => 200,
+                'message' => 'Order updated successfully.',
+                'data' => $updatedOrder
+            ];
         }
 
         
