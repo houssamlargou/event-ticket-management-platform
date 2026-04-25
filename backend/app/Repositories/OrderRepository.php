@@ -15,4 +15,9 @@ class OrderRepository implements OrderRepositoryInterface {
                 ->latest()
                 ->get();
     }
+
+    public function findById(int $id){
+        return Order::with('ticket.event')
+                ->find($id);
+    }
 }
