@@ -39,4 +39,12 @@ class OrderRepository implements OrderRepositoryInterface {
 
         return $order->fresh(['ticket.event']);
     }
+
+    public function cancel($order){
+        $order->update([
+            'payment_status' => 'cancelled',
+        ]);
+
+        return $order->fresh(['ticket.event']);
+    }
 }
