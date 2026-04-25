@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Ticket\StoreTicketRequest;
 use App\Services\TicketService;
 use Illuminate\Http\JsonResponse;
+use App\Http\Resources\TicketResource;
 
 class TicketController extends Controller
 {

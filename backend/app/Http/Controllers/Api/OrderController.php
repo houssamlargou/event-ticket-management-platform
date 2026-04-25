@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Order\StoreOrderRequest;
 use App\Services\OrderService;
 use Illuminate\Http\JsonResponse;
+use App\Http\Resources\OrderResource;
 
 class OrderController extends Controller
 {
@@ -48,7 +49,7 @@ class OrderController extends Controller
 
         return response()->json([
             'message' => $result['message'],
-            'data' => $result['data'],
+            'data' => OrderResource::collection($result['data']),
         ], $result['status']);
     }
 
@@ -63,7 +64,7 @@ class OrderController extends Controller
 
         $result = $this->orderService->getOrderById($id, $user);
 
-        if(!$result){
+        if(!$result['success']){
             return response()->json([
                 'message' => $result['message'],
             ], $result['status']);
@@ -71,7 +72,7 @@ class OrderController extends Controller
 
         return response()->json([
             'message' => $result['message'],
-            'data' => $result['data'],
+            'data' => new OrderResource($result['data']),
         ], $result['status']);
     }
 
