@@ -25,6 +25,19 @@ class OrderService {
             ];
         }
 
+        $existingOrder = $this->orderRepository->findByUserAndTicket($user->id, $ticket->id);
+
+        if($existingOrder) {
+            $newQuantity = $existingOrder->quantity + $data['quantity'];
+            $newTotalPrice = $ticket->price * $newQuantity;
+            $updatedOrder = $this->orderRepository->update($existingOrder, [
+                'quantity' => $newQuantity,
+                'total_price' => $newTotalPrice,
+            ]);
+        }
+
+        
+
         $totalPrice = $ticket->price * $data['quantity'];
 
         $order = $this->orderRepository->create([

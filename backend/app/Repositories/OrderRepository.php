@@ -20,4 +20,15 @@ class OrderRepository implements OrderRepositoryInterface {
         return Order::with('ticket.event')
                 ->find($id);
     }
+
+    public function findByUserAndTicket(int $userId, int $ticketId) {
+    return Order::where('user_id', $userId)
+            ->where('ticket_id', $ticketId)
+            ->first();
+    }
+
+    public function update($order, array $data){
+        $order ->update($data);
+        return $order->fresh(['ticket.event']);
+    }
 }
