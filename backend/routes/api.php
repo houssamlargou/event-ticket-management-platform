@@ -4,12 +4,14 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\TicketController;
+use App\Http\Controllers\Api\OrderController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function(){
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'user']);
+    Route::post('/orders', [OrderController::class, 'store']);
 });
 
 Route::get('/admin-only', function(){
@@ -34,3 +36,4 @@ Route::middleware(['auth:sanctum', 'role:organizer'])->group(function(){
     });
 Route::patch('/events/{id}', [EventController::class, 'moderate'])->middleware(['auth:sanctum', 'role:admin']);
 Route::get('/events/{eventId}/tickets', [TicketController::class, 'index']);
+

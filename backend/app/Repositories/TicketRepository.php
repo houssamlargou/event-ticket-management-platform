@@ -14,4 +14,8 @@ class TicketRepository implements TicketRepositoryInterface {
                 ->latest()
                 ->get();
     }
+
+    public function findById(int $id) {
+        return Ticket::find($id);
+    }
 }
