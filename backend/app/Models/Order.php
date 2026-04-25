@@ -10,7 +10,8 @@ class Order extends Model
         'user_id',
         'ticket_id',
         'quantity',
-        'total_price'
+        'total_price',
+        'payment_status',
     ];
 
     public function user(){

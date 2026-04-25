@@ -54,6 +54,7 @@ class OrderService {
             'ticket_id' => $ticket->id,
             'quantity' => $data['quantity'],
             'total_price' => $totalPrice,
+            'payment_status' => 'pending',
         ]);
 
         $ticket->update([
