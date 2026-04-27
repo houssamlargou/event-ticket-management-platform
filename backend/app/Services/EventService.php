@@ -97,7 +97,7 @@ class EventService {
             ];
         }
 
-        public function getVisibleEvents($user = null) {
-            return $this->eventRepository->getVisibleEvents($user, $filter);
+        public function getVisibleEvents($user = null, array $filters = []) {
+            return $this->eventRepository->getVisibleEvents($user, $filters);
         }
 }

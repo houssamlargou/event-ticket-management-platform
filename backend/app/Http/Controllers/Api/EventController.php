@@ -32,7 +32,7 @@ class EventController extends Controller
         ], 201);
     }
     
-    public function index(): JsonResponse {
+    public function index() {
         $user = request()->user('sanctum');
 
         $filter = [
