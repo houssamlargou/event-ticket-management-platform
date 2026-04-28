@@ -25,6 +25,7 @@ class EventResource extends JsonResource
                 'id' => $this->user->id,
                 'name' => $this->user->name,
             ],
+            'image' => $this->image ? asset('storage/' . $this->image) : null,
         ];
     }
 }

@@ -21,14 +21,21 @@ class EventController extends Controller
             ], 401);
         }
 
+        $data = $request->validated();
+
+        if($request->hasFile('image')) {
+            $path = $request->file('image')->store('events','public');
+            $data['image'] = $path;
+        }
+
         $event = $this->eventService->createEvent(
-            $request->validated(),
+            $data,
             $user
         );
 
         return response()->json([
             'message' => 'Event created successfully.',
-            'data' => $event,
+            'data' => new EventResource($event),
         ], 201);
     }
     
