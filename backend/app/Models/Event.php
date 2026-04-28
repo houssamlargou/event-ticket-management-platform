@@ -12,7 +12,8 @@ class Event extends Model
         'description',
         'event_date',
         'location',
-        'status'
+        'status',
+        'image'
     ];
 
     public function user(){

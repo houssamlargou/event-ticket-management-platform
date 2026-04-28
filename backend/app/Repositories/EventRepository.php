@@ -44,7 +44,7 @@ class EventRepository implements EventRepositoryInterface {
         } else if ($user->role === 'organizer') {
             $query->where(function ($q) use ($user){
                 $q->where('status', 'approved')
-                    ->orWhere('user_id'. $user->id);
+                    ->orWhere('user_id', $user->id);
             });
         }
 

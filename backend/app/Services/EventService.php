@@ -15,6 +15,7 @@ class EventService {
                 'event_date' => $data['event_date'],
                 'location' => $data['location'],
                 'status' => 'pending',
+                'image' => $data['image'] ?? null,
             ]);
         }
         public function getAllEvents(){
