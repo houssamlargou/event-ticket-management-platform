@@ -4,6 +4,8 @@ import Login from "../pages/Login.vue";
 import MyOrders from "../pages/MyOrders.vue";
 import EventDetails from "../pages/EventDetails.vue";
 import CreateEvent from "../pages/CreateEvent.vue";
+import EditEvent from "../pages/EditEvent.vue";
+
 
 const routes = [
   { path: "/", component: Home },
@@ -14,7 +16,8 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {path: "/events/:id", component: EventDetails},
-  {path: "/create-event", component: CreateEvent}
+  {path: "/create-event", component: CreateEvent},
+  {path: "/edit-event/:id", component: EditEvent}
 ];
 
 const router = createRouter({

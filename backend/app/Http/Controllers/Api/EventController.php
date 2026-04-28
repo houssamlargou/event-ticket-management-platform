@@ -70,9 +70,17 @@ class EventController extends Controller
                 'message' => 'Unauthenticated.',
             ], 401);
         }
+
+        $data = $request->validated();
+
+        if($request->hasFile('image')){
+            $path = $request->file('image')->store('events', 'public');
+            $data['image'] = $path;
+        }
+
         $result = $this->eventService->updateEvent(
             $id,
-            $request->validated(),
+            $data,
             $user
         );
         if(!$result['success']){
@@ -82,7 +90,7 @@ class EventController extends Controller
         }
         return response()->json([
             'message' => $result['message'],
-            'data' => $result['data'],
+            'data' => new EventResource($result['data']),
         ], $result['status']);
     }
 
