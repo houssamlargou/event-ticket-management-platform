@@ -60,7 +60,7 @@ class EventController extends Controller
         }
         return response()->json([
             'message' => 'Event retrieved successfully.',
-            'data' => $event,
+            'data' => new EventResource($event),
         ]);
     }
     public function update(UpdateEventRequest $request, int $id): JsonResponse {
