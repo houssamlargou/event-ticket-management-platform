@@ -28,13 +28,11 @@ const router = createRouter({
 });
 
 // guard
-router.beforeEach((to, from, next) => {
+router.beforeEach((to) => {
   const token = localStorage.getItem("token");
 
-  if (to.meta.requiresAuth && !token) {
-    next("/login");
-  } else {
-    next();
+  if (!token && to.path !== "/login") {
+    return "/login";
   }
 });
 
