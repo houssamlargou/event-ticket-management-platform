@@ -5,6 +5,7 @@ import MyOrders from "../pages/MyOrders.vue";
 import EventDetails from "../pages/EventDetails.vue";
 import CreateEvent from "../pages/CreateEvent.vue";
 import EditEvent from "../pages/EditEvent.vue";
+import Favorites from "../pages/Favorites.vue";
 
 
 const routes = [
@@ -17,7 +18,8 @@ const routes = [
   },
   {path: "/events/:id", component: EventDetails},
   {path: "/create-event", component: CreateEvent},
-  {path: "/edit-event/:id", component: EditEvent}
+  {path: "/edit-event/:id", component: EditEvent},
+  {path: "/favorites", component: Favorites},
 ];
 
 const router = createRouter({
