@@ -11,10 +11,11 @@
         </div>
         
         <button
+          v-if="currentUser && currentUser.user.role === 'organizer'"
           @click="$router.push('/create-event')"
-          class="bg-indigo-600 text-white px-8 py-4 rounded-xl font-bold shadow-md"
+          class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
         >
-          + Host an Event
+          Create Event
         </button>
       </header>
 
@@ -77,6 +78,7 @@ const events = ref([]);
 
 const formatMonth = (date) => new Date(date).toLocaleString('en-US', { month: 'short' });
 const formatDay = (date) => new Date(date).getDate();
+const currentUser = JSON.parse(localStorage.getItem("user"));
 
 onMounted(async () => {
   try {
