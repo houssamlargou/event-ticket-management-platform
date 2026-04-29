@@ -16,15 +16,17 @@
           
           <div class="flex gap-3">
             <button 
-            @click="$router.push(`/edit-event/${$route.params.id}`)"
-            class="bg-white text-slate-900 px-6 py-2 rounded-lg font-bold text-sm shadow-md hover:bg-slate-50 transition"
+              v-if="currentUser && currentUser.user.role === 'organizer'"
+              @click="$router.push(`/edit-event/${$route.params.id}`)"
+              class="bg-white text-slate-900 px-6 py-2 rounded-lg font-bold text-sm shadow-md"
             >
-            Edit Event
+              Edit Event
             </button>
-
+            
             <button 
+              v-if="currentUser && currentUser.user.role === 'organizer'"
               @click="deleteEvent" 
-              class="bg-red-600 text-white px-6 py-2 rounded-lg font-bold text-sm shadow-md hover:bg-red-700 transition"
+              class="bg-red-600 text-white px-6 py-2 rounded-lg font-bold text-sm shadow-md"
             >
               Delete Event
             </button>
@@ -47,9 +49,19 @@
             </div>
           </div>
           
-          <button class="bg-indigo-600 text-white px-10 py-4 rounded-xl font-bold hover:bg-indigo-700 transition">
-            Get Tickets
-          </button>
+          <div class="flex items-center gap-4">
+            <button
+              v-if="currentUser && currentUser.user.role === 'user'"
+              @click.stop="toggleFavorite"
+              class="border-2 border-slate-200 text-slate-700 px-6 py-4 rounded-xl font-bold flex items-center gap-2 shadow-sm"
+            >
+              {{ event.is_favorited ? '❤️ Favorited' : '🤍 Add to favorites' }}
+            </button>
+
+            <button class="bg-indigo-600 text-white px-10 py-4 rounded-xl font-bold shadow-md">
+              Get Tickets
+            </button>
+          </div>
         </div>
       </div>
 
@@ -69,7 +81,7 @@
             <p class="text-slate-500 text-sm mb-6">
               This is a verified event. For more details or group bookings, contact the host.
             </p>
-            <button class="w-full border-2 border-slate-200 py-3 rounded-xl font-bold text-slate-700 hover:bg-slate-50 transition">
+            <button class="w-full border-2 border-slate-200 py-3 rounded-xl font-bold text-slate-700">
               Contact Host
             </button>
           </div>
@@ -86,9 +98,9 @@ import api from "../api/axios";
 
 const route = useRoute();
 const router = useRouter();
-
 const event = ref({});
 const tickets = ref([]);
+const currentUser = ref(JSON.parse(localStorage.getItem("user")));
 
 const formatDate = (dateString) => {
   if (!dateString) return '';
@@ -124,4 +136,13 @@ onMounted(async () => {
     console.error(err);
   }
 });
+
+const toggleFavorite = async () => {
+  try {
+    const res = await api.post(`/events/${event.value.id}/favorites`);
+    event.value.is_favorited = res.data.favorited;
+  } catch (err) {
+    console.error(err);
+  }
+};
 </script>

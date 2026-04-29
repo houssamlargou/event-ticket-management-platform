@@ -66,7 +66,8 @@ export default {
 
         const token = res.data.data.token;
         localStorage.setItem("token", token);
-
+        const userRes = await api.get('/user');
+        localStorage.setItem("user", JSON.stringify(userRes.data.data));
         this.$router.push("/");
       } catch (err) {
         this.error = "Invalid email or password";
