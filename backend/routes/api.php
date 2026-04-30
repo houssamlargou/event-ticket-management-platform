@@ -21,9 +21,9 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::get('/orders/{id}', [OrderController::class, 'show']);
     Route::post('/orders/{id}/pay', [OrderController::class, 'pay']);
     Route::post('/orders/{id}/cancel', [OrderController::class, 'cancel']);
-    Route::get('/admin/dashboard', [AdminController::class, 'dashboard']);
     Route::get('/favorites', [FavoriteController::class, 'index']);
     Route::post('/events/{id}/favorites', [FavoriteController::class, 'toggle']);
+    Route::delete('/events/{id}', [EventController::class, 'destroy']);
 });
 
 Route::post('/events', [EventController::class, 'store'])->middleware(['role:organizer', 'auth:sanctum']);
@@ -35,9 +35,13 @@ Route::post('/events/{id}/comments', [CommentController::class, 'store'])->middl
 Route::middleware(['auth:sanctum', 'role:organizer'])->group(function(){
     Route::get('/organizer/events', [EventController::class, 'organizerEvents']);
     Route::put('/events/{id}', [EventController::class, 'update']);
-    Route::delete('/events/{id}', [EventController::class, 'destroy']);
     Route::post('/events/{eventId}/tickets', [TicketController::class, 'store']);
     Route::get('/notifications', [NotificationController::class, 'index']);
     Route::patch('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
 });
-Route::patch('/events/{id}/status', [EventController::class, 'moderate'])->middleware(['auth:sanctum', 'role:admin']);
+Route::middleware(['auth:sanctum', 'role:admin'])->group(function(){
+    Route::get('/admin/dashboard', [AdminController::class, 'dashboard']);
+    Route::get('/admin/events', [AdminController::class, 'events']);
+    Route::get('/admin/users', [AdminController::class, 'users']);
+    Route::patch('/events/{id}/status', [EventController::class, 'moderate']);
+});

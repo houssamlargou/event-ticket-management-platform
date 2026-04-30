@@ -18,7 +18,8 @@
         <div
           v-for="order in orders"
           :key="order.id"
-          class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden"
+          @click="openOrderEvent(order)"
+          class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden cursor-pointer hover:border-indigo-300 hover:shadow-md transition"
         >
           <div class="p-6">
             <div class="flex flex-wrap justify-between items-start gap-4 mb-4">
@@ -42,13 +43,13 @@
 
               <div v-if="order.payment_status === 'pending'" class="flex gap-3">
                 <button
-                  @click="cancelOrder(order.id)"
+                  @click.stop="cancelOrder(order.id)"
                   class="text-sm font-medium text-slate-600 hover:text-red-600 transition-colors"
                 >
                   Cancel
                 </button>
                 <button
-                  @click="payOrder(order.id)"
+                  @click.stop="payOrder(order.id)"
                   class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg text-sm font-semibold transition-all shadow-sm"
                 >
                   Pay Now
@@ -64,8 +65,10 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import api from "../api/axios";
 
+const router = useRouter();
 const orders = ref([]);
 const loading = ref(true);
 
@@ -85,6 +88,27 @@ const fetchOrders = async () => {
   } finally {
     loading.value = false;
   }
+};
+
+const resolveOrderEventId = (order) => {
+  return (
+    order?.event_id ??
+    order?.event?.id ??
+    order?.ticket?.event_id ??
+    order?.ticket?.event?.id ??
+    null
+  );
+};
+
+const openOrderEvent = (order) => {
+  const eventId = resolveOrderEventId(order);
+
+  if (!eventId) {
+    console.warn("Unable to navigate from order because event_id is missing.", order);
+    return;
+  }
+
+  router.push(`/events/${eventId}`);
 };
 
 const payOrder = async (id) => {

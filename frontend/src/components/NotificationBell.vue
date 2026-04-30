@@ -50,8 +50,9 @@
         <div
           v-for="notification in notifications"
           :key="notification.id"
-          class="px-4 py-4"
-          :class="notification.read_at ? 'bg-white' : 'bg-indigo-50/40'"
+          class="px-4 py-4 cursor-pointer transition-colors"
+          :class="notification.read_at ? 'bg-white hover:bg-slate-50' : 'bg-indigo-50/40 hover:bg-indigo-50'"
+          @click="openNotification(notification)"
         >
           <div class="flex items-start justify-between gap-3">
             <div class="min-w-0">
@@ -71,7 +72,7 @@
 
             <button
               v-if="!notification.read_at"
-              @click="markAsRead(notification)"
+              @click.stop="markAsRead(notification)"
               class="shrink-0 text-xs font-semibold text-indigo-600 hover:text-indigo-700"
             >
               Mark read
@@ -85,8 +86,10 @@
 
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
 import api from "../api/axios";
 
+const router = useRouter();
 const rootEl = ref(null);
 const isOpen = ref(false);
 const loading = ref(false);
@@ -136,8 +139,27 @@ const markAsRead = async (notification) => {
     notifications.value = notifications.value.map((item) =>
       item.id === notification.id ? { ...item, ...updatedNotification } : item
     );
+
+    return updatedNotification;
   } catch (err) {
     error.value = err.response?.data?.message || "Unable to mark notification as read.";
+    return null;
+  }
+};
+
+const openNotification = async (notification) => {
+  const updatedNotification = await markAsRead(notification);
+
+  if (!updatedNotification && !notification.read_at) {
+    return;
+  }
+
+  isOpen.value = false;
+
+  const eventId = updatedNotification?.data?.event_id ?? notification.data?.event_id;
+
+  if (eventId) {
+    router.push(`/events/${eventId}`);
   }
 };
 
