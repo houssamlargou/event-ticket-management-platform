@@ -58,8 +58,8 @@
               {{ event.is_favorited ? '❤️ Favorited' : '🤍 Add to favorites' }}
             </button>
             <button
-              v-if="isNormalUser"
-              @click="scrollToTickets"
+              v-if="canAccessTicketActions"
+              @click="handleGetTickets"
               class="bg-indigo-600 text-white px-10 py-4 rounded-xl font-bold"
             >
               Get Tickets
@@ -115,6 +115,7 @@
                   </div>
                   
                   <button
+                    v-if="canAccessTicketActions"
                     @click="buyTicket(ticket)"
                     class="bg-emerald-600 text-white px-8 py-3 rounded-xl font-bold shadow-md hover:bg-emerald-700 transition self-end h-[46px]"
                   >
@@ -146,16 +147,20 @@
 import { computed, nextTick, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import api from "../api/axios";
+import { getStoredToken, getStoredUser } from "../utils/auth";
 
 const route = useRoute();
 const router = useRouter();
 const event = ref({});
 const tickets = ref([]);
-const currentUser = ref(JSON.parse(localStorage.getItem("user")));
+const currentUser = ref(getStoredUser());
+const token = ref(getStoredToken());
 const ticketsSection = ref(null);
 const userRole = computed(() => currentUser.value?.user?.role ?? currentUser.value?.role ?? null);
-const isOrganizer = computed(() => userRole.value === 'organizer');
-const isNormalUser = computed(() => userRole.value === 'user');
+const isGuest = computed(() => !token.value);
+const isOrganizer = computed(() => !isGuest.value && userRole.value === 'organizer');
+const isNormalUser = computed(() => !isGuest.value && userRole.value === 'user');
+const canAccessTicketActions = computed(() => isGuest.value || isNormalUser.value);
 
 const formatDate = (dateString) => {
   if (!dateString) return '';
@@ -197,11 +202,21 @@ const toggleFavorite = async () => {
     const res = await api.post(`/events/${event.value.id}/favorites`);
     event.value.is_favorited = res.data.favorited;
   } catch (err) {
+    if (err.response?.status === 401) {
+      router.push("/login");
+      return;
+    }
+
     console.error(err);
   }
 };
 
 const buyTicket = async (ticket) => {
+  if (isGuest.value) {
+    router.push("/login");
+    return;
+  }
+
   if (!ticket.qty || ticket.qty <= 0) {
     alert("Enter valid quantity");
     return;
@@ -218,9 +233,23 @@ const buyTicket = async (ticket) => {
     const res = await api.get(`/events/${event.value.id}/tickets`);
     tickets.value = res.data.data;
   } catch (err) {
+    if (err.response?.status === 401) {
+      router.push("/login");
+      return;
+    }
+
     console.error(err);
     alert("Error buying ticket");
   }
+};
+
+const handleGetTickets = async () => {
+  if (isGuest.value) {
+    router.push("/login");
+    return;
+  }
+
+  await scrollToTickets();
 };
 
 const scrollToTickets = async () => {
