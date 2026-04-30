@@ -8,6 +8,8 @@ import EventDetails from "../pages/EventDetails.vue";
 import CreateEvent from "../pages/CreateEvent.vue";
 import EditEvent from "../pages/EditEvent.vue";
 import Favorites from "../pages/Favorites.vue";
+import OrganizerEvents from "../pages/OrganizerEvents.vue";
+import { getStoredToken, getStoredUser, getUserRole } from "../utils/auth";
 
 
 const routes = [
@@ -25,6 +27,11 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {path: "/events/:id", component: EventDetails},
+  {
+    path: "/organizer/events",
+    component: OrganizerEvents,
+    meta: { requiresAuth: true, roles: ["organizer"] },
+  },
   {path: "/create-event", component: CreateEvent, meta: { requiresAuth: true }},
   {path: "/edit-event/:id", component: EditEvent, meta: { requiresAuth: true }},
   {path: "/favorites", component: Favorites, meta: { requiresAuth: true }},
@@ -37,10 +44,15 @@ const router = createRouter({
 
 // guard
 router.beforeEach((to) => {
-  const token = localStorage.getItem("token");
+  const token = getStoredToken();
+  const role = getUserRole(getStoredUser());
 
   if (to.meta.requiresAuth && !token) {
     return "/login";
+  }
+
+  if (to.meta.roles?.length && !to.meta.roles.includes(role)) {
+    return token ? "/" : "/login";
   }
 
   if (to.meta.guestOnly && token) {

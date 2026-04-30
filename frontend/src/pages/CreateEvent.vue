@@ -144,7 +144,7 @@ const submit = async () => {
       headers: { "Content-Type": "multipart/form-data" },
     });
 
-    router.push("/");
+      router.push("/organizer/events");
   } catch (err) {
     error.value = "Something went wrong. Please check your connection.";
     console.error(err);

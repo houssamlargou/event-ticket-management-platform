@@ -15,6 +15,8 @@
           {{ item.label }}
         </RouterLink>
 
+        <NotificationBell v-if="isOrganizer" />
+
         <button
           v-if="isAuthenticated"
           @click="logout"
@@ -31,6 +33,7 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { RouterLink, useRoute, useRouter } from "vue-router";
 import api from "../api/axios";
+import NotificationBell from "./NotificationBell.vue";
 import {
   clearStoredAuth,
   getStoredToken,
@@ -66,6 +69,7 @@ onBeforeUnmount(() => {
 
 const isAuthenticated = computed(() => Boolean(token.value));
 const userRole = computed(() => getUserRole(currentUser.value));
+const isOrganizer = computed(() => isAuthenticated.value && userRole.value === "organizer");
 
 const navItems = computed(() => {
   if (!isAuthenticated.value) {
@@ -88,6 +92,7 @@ const navItems = computed(() => {
   if (userRole.value === "organizer") {
     return [
       { label: "Home", to: "/" },
+      { label: "My Events", to: "/organizer/events" },
       { label: "Create Event", to: "/create-event" },
       { label: "Profile", to: "/profile" },
     ];

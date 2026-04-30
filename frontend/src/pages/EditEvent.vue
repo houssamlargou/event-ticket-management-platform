@@ -153,6 +153,7 @@ export default {
 
     async submit() {
       const id = this.$route.params.id;
+      const redirect = this.$route.query.redirect;
 
       const formData = new FormData();
       formData.append("title", this.title);
@@ -166,7 +167,7 @@ export default {
 
       await api.post(`/events/${id}?_method=PUT`, formData);
 
-      this.$router.push(`/events/${id}`);
+      this.$router.push(redirect || `/events/${id}`);
     },
   },
 };

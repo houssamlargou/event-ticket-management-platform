@@ -20,6 +20,10 @@ class Event extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function comments(){
+        return $this->hasMany(Comment::class);
+    }
+
     public function favoritedBy() {
         return $this->belongsToMany(User::class, 'favorites');
     }

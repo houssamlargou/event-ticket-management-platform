@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Event\StoreEventRequest;
 use App\Http\Requests\Event\UpdateEventRequest;
+use App\Models\Event;
 use App\Services\EventService;
 use Illuminate\Http\JsonResponse;
 use App\Http\Resources\EventResource;
@@ -65,6 +66,17 @@ class EventController extends Controller
             'data' => new EventResource($event),
         ]);
     }
+
+    public function organizerEvents()
+    {
+        $events = Event::with('user')
+            ->where('user_id', auth()->id())
+            ->latest()
+            ->get();
+
+        return EventResource::collection($events);
+    }
+
     public function update(UpdateEventRequest $request, int $id): JsonResponse {
         $user = auth()->user();
         if(!$user){

@@ -44,4 +44,12 @@ class User extends Authenticatable
     public function favorites(){
         return $this->belongsToMany(Event::class, 'favorites');
     }
+
+    public function comments(){
+        return $this->hasMany(Comment::class);
+    }
+
+    public function organizerNotifications(){
+        return $this->hasMany(OrganizerNotification::class, 'user_id');
+    }
 }
