@@ -13,6 +13,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function(){
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'user']);
+    Route::put('/profile', [AuthController::class, 'updateProfile']);
     Route::post('/orders', [OrderController::class, 'store']);
     Route::get('/orders', [OrderController::class, 'index']);
     Route::get('/orders/{id}', [OrderController::class, 'show']);
@@ -33,4 +34,3 @@ Route::middleware(['auth:sanctum', 'role:organizer'])->group(function(){
     Route::post('/events/{eventId}/tickets', [TicketController::class, 'store']);
 });
 Route::patch('/events/{id}/status', [EventController::class, 'moderate'])->middleware(['auth:sanctum', 'role:admin']);
-
