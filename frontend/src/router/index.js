@@ -9,6 +9,8 @@ import CreateEvent from "../pages/CreateEvent.vue";
 import EditEvent from "../pages/EditEvent.vue";
 import Favorites from "../pages/Favorites.vue";
 import OrganizerEvents from "../pages/OrganizerEvents.vue";
+import AdminDashboard from "../pages/AdminDashboard.vue";
+import AdminEventReview from "../pages/AdminEventReview.vue";
 import { getStoredToken, getStoredUser, getUserRole } from "../utils/auth";
 
 
@@ -31,6 +33,16 @@ const routes = [
     path: "/organizer/events",
     component: OrganizerEvents,
     meta: { requiresAuth: true, roles: ["organizer"] },
+  },
+  {
+    path: "/admin",
+    component: AdminDashboard,
+    meta: { requiresAuth: true, roles: ["admin"] },
+  },
+  {
+    path: "/admin/events/:id/review",
+    component: AdminEventReview,
+    meta: { requiresAuth: true, roles: ["admin"] },
   },
   {path: "/create-event", component: CreateEvent, meta: { requiresAuth: true }},
   {path: "/edit-event/:id", component: EditEvent, meta: { requiresAuth: true }},

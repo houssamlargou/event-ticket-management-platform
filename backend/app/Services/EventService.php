@@ -58,7 +58,7 @@ class EventService {
                     'message' => 'Event not found.',
                 ];
             }
-            if($event->user_id !== $user->id) {
+            if($user->role !== 'admin' && $event->user_id !== $user->id) {
                 return [
                     'success' => false,
                     'status' => 403,

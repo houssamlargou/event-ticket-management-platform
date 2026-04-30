@@ -98,6 +98,14 @@ const navItems = computed(() => {
     ];
   }
 
+  if (userRole.value === "admin") {
+    return [
+      { label: "Home", to: "/" },
+      { label: "Dashboard", to: "/admin" },
+      { label: "Profile", to: "/profile" },
+    ];
+  }
+
   return [
     { label: "Home", to: "/" },
     { label: "Profile", to: "/profile" },
