@@ -44,7 +44,9 @@ class EventController extends Controller
 
         $filter = [
             'status' => request()->query('status'),
-            ];
+            'city' => request()->query('city'),
+            'time' => request()->query('time'),
+        ];
 
         $events = $this->eventService->getVisibleEvents($user, $filter);
 

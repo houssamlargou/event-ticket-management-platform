@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Event;
+use Carbon\Carbon;
 
 // $this->
 
@@ -52,6 +53,22 @@ class EventRepository implements EventRepositoryInterface {
             $query->where('status', $filter['status']);
         }
 
-        return $query->latest()->paginate(10);
+        if (!empty($filter['city'])) {
+            $query->where('location', 'like', '%' . $filter['city'] . '%');
+        }
+
+        if (!empty($filter['time'])) {
+            $now = Carbon::now();
+
+            if ($filter['time'] === 'upcoming') {
+                $query->where('event_date', '>=', $now);
+            } elseif ($filter['time'] === 'past') {
+                $query->where('event_date', '<', $now);
+            } elseif ($filter['time'] === 'today') {
+                $query->whereDate('event_date', $now->toDateString());
+            }
+        }
+
+        return $query->latest()->paginate(10)->withQueryString();
     }
 };
