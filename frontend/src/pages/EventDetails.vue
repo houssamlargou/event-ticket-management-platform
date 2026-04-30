@@ -125,6 +125,82 @@
               </div>
             </div>
           </section>
+
+          <section class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+            <div>
+              <h2 class="text-xl font-bold text-slate-900">Comments</h2>
+              <p class="text-sm text-slate-500 mt-1">
+                Share your thoughts about this event.
+              </p>
+            </div>
+
+            <form @submit.prevent="submitComment" class="space-y-4">
+              <textarea
+                v-model="commentBody"
+                rows="4"
+                maxlength="1000"
+                placeholder="Write your comment here..."
+                class="w-full border border-slate-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+              ></textarea>
+
+              <p
+                v-if="commentHelperText"
+                class="text-sm text-slate-500"
+              >
+                {{ commentHelperText }}
+              </p>
+
+              <p v-if="commentSuccess" class="text-sm text-emerald-600 font-medium">
+                {{ commentSuccess }}
+              </p>
+
+              <p v-if="commentError" class="text-sm text-red-600 font-medium">
+                {{ commentError }}
+              </p>
+
+              <div class="flex justify-end">
+                <button
+                  type="submit"
+                  :disabled="commentSubmitting"
+                  class="bg-slate-900 text-white px-6 py-3 rounded-xl font-bold hover:bg-indigo-600 transition disabled:opacity-60 disabled:hover:bg-slate-900"
+                >
+                  {{ commentButtonLabel }}
+                </button>
+              </div>
+            </form>
+
+            <div v-if="commentsLoading" class="text-sm text-slate-500">
+              Loading comments...
+            </div>
+
+            <div v-else-if="commentsError" class="text-sm text-red-600">
+              {{ commentsError }}
+            </div>
+
+            <div v-else-if="comments.length === 0" class="text-sm text-slate-500">
+              No comments yet. Be the first to start the conversation.
+            </div>
+
+            <div v-else class="space-y-4">
+              <article
+                v-for="comment in comments"
+                :key="comment.id"
+                class="rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4"
+              >
+                <div class="flex items-center justify-between gap-4 mb-2">
+                  <p class="font-semibold text-slate-900">
+                    {{ comment.user?.name || 'Anonymous' }}
+                  </p>
+                  <p class="text-xs text-slate-400">
+                    {{ formatCommentDate(comment.created_at) }}
+                  </p>
+                </div>
+                <p class="text-slate-600 whitespace-pre-line">
+                  {{ comment.body }}
+                </p>
+              </article>
+            </div>
+          </section>
         </div>
 
         <div class="lg:col-span-1">
@@ -153,14 +229,39 @@ const route = useRoute();
 const router = useRouter();
 const event = ref({});
 const tickets = ref([]);
+const comments = ref([]);
 const currentUser = ref(getStoredUser());
 const token = ref(getStoredToken());
 const ticketsSection = ref(null);
+const commentBody = ref("");
+const commentSubmitting = ref(false);
+const commentSuccess = ref("");
+const commentError = ref("");
+const commentsLoading = ref(false);
+const commentsError = ref("");
 const userRole = computed(() => currentUser.value?.user?.role ?? currentUser.value?.role ?? null);
 const isGuest = computed(() => !token.value);
 const isOrganizer = computed(() => !isGuest.value && userRole.value === 'organizer');
 const isNormalUser = computed(() => !isGuest.value && userRole.value === 'user');
 const canAccessTicketActions = computed(() => isGuest.value || isNormalUser.value);
+const commentHelperText = computed(() => {
+  if (isGuest.value) {
+    return "Log in to publish your comment.";
+  }
+
+  return "";
+});
+const commentButtonLabel = computed(() => {
+  if (commentSubmitting.value) {
+    return "Posting...";
+  }
+
+  if (isGuest.value) {
+    return "Login to Comment";
+  }
+
+  return "Post Comment";
+});
 
 const formatDate = (dateString) => {
   if (!dateString) return '';
@@ -169,6 +270,15 @@ const formatDate = (dateString) => {
     month: 'long',
     day: 'numeric',
     year: 'numeric'
+  });
+};
+
+const formatCommentDate = (dateString) => {
+  if (!dateString) return '';
+
+  return new Date(dateString).toLocaleString('en-US', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
   });
 };
 
@@ -183,6 +293,20 @@ const deleteEvent = async () => {
   router.push("/");
 };
 
+const fetchComments = async () => {
+  commentsLoading.value = true;
+  commentsError.value = "";
+
+  try {
+    const res = await api.get(`/events/${route.params.id}/comments`);
+    comments.value = res.data?.data ?? [];
+  } catch (err) {
+    commentsError.value = err.response?.data?.message || "Unable to load comments.";
+  } finally {
+    commentsLoading.value = false;
+  }
+};
+
 onMounted(async () => {
   const id = route.params.id;
   try {
@@ -195,6 +319,8 @@ onMounted(async () => {
   } catch (err) {
     console.error(err);
   }
+
+  await fetchComments();
 });
 
 const toggleFavorite = async () => {
@@ -250,6 +376,47 @@ const handleGetTickets = async () => {
   }
 
   await scrollToTickets();
+};
+
+const submitComment = async () => {
+  commentSuccess.value = "";
+  commentError.value = "";
+
+  if (isGuest.value) {
+    router.push("/login");
+    return;
+  }
+
+  const body = commentBody.value.trim();
+
+  if (!body) {
+    commentError.value = "Comment body is required.";
+    return;
+  }
+
+  commentSubmitting.value = true;
+
+  try {
+    await api.post(`/events/${route.params.id}/comments`, {
+      body,
+    });
+
+    commentBody.value = "";
+    commentSuccess.value = "Comment posted successfully.";
+    await fetchComments();
+  } catch (err) {
+    if (err.response?.status === 401) {
+      router.push("/login");
+      return;
+    }
+
+    commentError.value =
+      err.response?.data?.errors?.body?.[0] ||
+      err.response?.data?.message ||
+      "Unable to post your comment right now.";
+  } finally {
+    commentSubmitting.value = false;
+  }
 };
 
 const scrollToTickets = async () => {

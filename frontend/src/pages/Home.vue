@@ -153,6 +153,7 @@
 </template>
 
 <script setup>
+import axios from "axios";
 import { computed, onMounted, reactive, ref } from 'vue';
 import api from "../api/axios";
 import { getStoredUser, getUserRole } from "../utils/auth";
@@ -194,7 +195,7 @@ const fetchEvents = async (page = 1) => {
   loading.value = true;
 
   try {
-    const res = await api.get(`/events?${buildEventQuery(page)}`);
+    const res = await axios.get(`${api.defaults.baseURL}/events?${buildEventQuery(page)}`);
     events.value = res.data.data ?? [];
     currentPage.value = res.data.meta?.current_page ?? page;
     lastPage.value = res.data.meta?.last_page ?? 1;

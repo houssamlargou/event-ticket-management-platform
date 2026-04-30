@@ -6,7 +6,9 @@ use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\TicketController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\AdminController;
+use App\Http\Controllers\Api\CommentController;
 use App\Http\Controllers\Api\FavoriteController;
+use App\Http\Controllers\Api\NotificationController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -26,11 +28,16 @@ Route::middleware('auth:sanctum')->group(function(){
 
 Route::post('/events', [EventController::class, 'store'])->middleware(['role:organizer', 'auth:sanctum']);
 Route::get('/events', [EventController::class, 'index']);
+Route::get('/events/{id}/comments', [CommentController::class, 'index']);
 Route::get('/events/{eventId}/tickets', [TicketController::class, 'index']);
 Route::get('/events/{id}', [EventController::class, 'show']);
+Route::post('/events/{id}/comments', [CommentController::class, 'store'])->middleware('auth:sanctum');
 Route::middleware(['auth:sanctum', 'role:organizer'])->group(function(){
+    Route::get('/organizer/events', [EventController::class, 'organizerEvents']);
     Route::put('/events/{id}', [EventController::class, 'update']);
     Route::delete('/events/{id}', [EventController::class, 'destroy']);
     Route::post('/events/{eventId}/tickets', [TicketController::class, 'store']);
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::patch('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
 });
 Route::patch('/events/{id}/status', [EventController::class, 'moderate'])->middleware(['auth:sanctum', 'role:admin']);
